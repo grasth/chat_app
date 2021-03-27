@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "396111133459",
+    "project_id": "vkr-app-b9147",
+    "storage_bucket": "vkr-app-b9147.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396111133459:android:cc0d4e4f0deb3796b6f8e6",
+        "android_client_info": {
+          "package_name": "com.android.application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "396111133459-3296d2920fu2gsct8dl5miio3i44rjf2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrINT2apnksKJKTUhC7wkiCKKTz2l3b9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "396111133459-3296d2920fu2gsct8dl5miio3i44rjf2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
