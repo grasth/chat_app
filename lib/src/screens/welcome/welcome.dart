@@ -13,14 +13,16 @@ class WelcomePage extends StatelessWidget {
     return Container(
       color: backGroundColor,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
             padding: EdgeInsets.only(top: queryData.size.height * 0.06),
           ),
           BazaarText(),
           new Image.asset('./lib/src/assets/image/startUp.png',
-              width: queryData.size.width * 0.7,
-              height: queryData.size.width * 0.7),
+              width: queryData.size.width * 0.6,
+              height: queryData.size.width * 0.6),
           Text(
             "Присоединяйтесь к нам",
             style: welcomeTextStyle28,

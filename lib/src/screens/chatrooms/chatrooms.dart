@@ -1,4 +1,6 @@
 import 'package:chat_app/src/screens/const/color_const.dart';
+import 'package:chat_app/src/services/auth/auth.dart';
+import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
 import 'package:flutter/material.dart';
 
 class ChatRooms extends StatefulWidget {
@@ -10,7 +12,7 @@ class _ChatRoomsState extends State<ChatRooms> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
-
+    AuthFb authFb = new AuthFb();
     return Scaffold(
       backgroundColor: backGroundColor,
       appBar: AppBar(
@@ -31,7 +33,10 @@ class _ChatRoomsState extends State<ChatRooms> {
         actions: [
           IconButton(
             icon: Icon(Icons.exit_to_app, color: Colors.black),
-            onPressed: () => {},
+            onPressed: () => {
+              authFb.signOut(),
+              AccountPrefs.saveUserLoggedInSharedPreference(false)
+            },
           ),
           SizedBox(
             width: 30,

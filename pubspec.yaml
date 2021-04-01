@@ -11,8 +11,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  photo_manager: any
+    
+  firebase_auth: any
+  shared_preferences: any
+  random_string: any
+  cloud_firestore: any
+  firebase_core: any
+  firebase_storage: any
   cupertino_icons: ^1.0.0
 
 dev_dependencies:
