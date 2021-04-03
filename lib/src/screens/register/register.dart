@@ -4,9 +4,7 @@ import 'package:chat_app/src/screens/widgets/footer.dart';
 import 'package:chat_app/src/screens/widgets/header.dart';
 import 'package:chat_app/src/screens/widgets/subtitle.dart';
 import 'package:chat_app/src/services/auth/auth.dart';
-import 'package:chat_app/src/services/auth/firestore.dart';
 import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -17,30 +15,25 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AuthFb _authService = new AuthFb();
-  AddUser _addUser = new AddUser();
   bool isLoading = false;
 
   TextEditingController username = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
+  // ignore: unused_elemen
   _createUser() async {
     if (_formKey.currentState.validate()) {
       setState(() {
         isLoading = true;
       });
-
-      await _authService
-          .signUp(email: email.text, password: password.text)
-          .then((result) async {
+      _authService
+          .signUp(
+              username: username.text,
+              email: email.text,
+              password: password.text)
+          .then((result) {
         if (result != null) {
-          Map<String, String> userData = {
-            "userName": username.text,
-            "userEmail": email.text,
-            "timeStamp": Timestamp.now().seconds.toString(),
-            "userId": AccountPrefs.getUserIdSharedPreference();
-          };
-          _addUser.add(userData);
           AccountPrefs.saveUserEmailSharedPreference(email.text);
           AccountPrefs.saveUserLoggedInSharedPreference(true);
 
@@ -158,11 +151,6 @@ class _SignUpPageState extends State<SignUpPage> {
                             MaterialStateProperty.all<Color>(blueColor)),
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        print("Height: " + queryData.size.height.toString());
-                        print('RegisterData');
-                        print('UserName: ' + username.text);
-                        print('Email: ' + email.text);
-                        print('Password: ' + password.text);
                         _createUser();
                       }
                     },

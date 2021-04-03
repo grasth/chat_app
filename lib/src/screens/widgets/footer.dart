@@ -28,7 +28,7 @@ class FooterTextWidget extends StatelessWidget {
                         context,
                         new MaterialPageRoute(
                             builder: (BuildContext context) =>
-                                isSignUp ? new SignUpPage() : new AuthPage()))
+                                isSignUp ? new AuthPage() : new SignUpPage()))
                   },
               child: Text(isSignUp ? "Войти" : "Зарегистрироваться",
                   style: authHelpTextstyle))
