@@ -1,7 +1,6 @@
 import 'package:chat_app/src/screens/const/color_const.dart';
-import 'package:chat_app/src/screens/welcome/welcome.dart';
-import 'package:chat_app/src/services/auth/auth.dart';
-import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
+import 'package:chat_app/src/screens/profile/profile.dart';
+import 'package:chat_app/src/screens/search/search.dart';
 import 'package:flutter/material.dart';
 
 class ChatRooms extends StatefulWidget {
@@ -13,14 +12,19 @@ class _ChatRoomsState extends State<ChatRooms> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
-    AuthFb authFb = new AuthFb();
+
     return Scaffold(
       backgroundColor: backGroundColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: Icon(
-          Icons.verified_user_rounded,
-          color: Colors.black,
+        leading: IconButton(
+          icon: Image.asset('./lib/src/assets/image/addUser.png'),
+          onPressed: () {
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (BuildContext context) => UserSearch()));
+          },
         ),
         title: Text(
           'Сообщения',
@@ -33,12 +37,12 @@ class _ChatRoomsState extends State<ChatRooms> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.exit_to_app, color: Colors.black),
-            onPressed: () => {
-              authFb.signOut(),
-              AccountPrefs.saveUserLoggedInSharedPreference(false),
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => WelcomePage()))
+            icon: Image.asset('./lib/src/assets/image/addUser.png'),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (BuildContext context) => Profile()));
             },
           ),
           SizedBox(
