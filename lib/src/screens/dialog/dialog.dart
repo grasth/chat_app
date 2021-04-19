@@ -22,12 +22,12 @@ class _Chat extends State<Chat> {
       builder: (context, snapshot) {
         return snapshot.hasData
             ? ListView.builder(
-                itemCount: snapshot.data,
+                itemCount: snapshot.data.size,
                 itemBuilder: (context, index) {
                   return MessageTile(
-                    message: snapshot.data.docs(index).data("message"),
+                    message: snapshot.data.docs[index].get("message"),
                     sendByMe: Constants.myName ==
-                        snapshot.data.docs(index).data("sendBy"),
+                        snapshot.data.docs[index].get("sendBy"),
                   );
                 })
             : Container();
@@ -83,7 +83,7 @@ class _Chat extends State<Chat> {
                         child: TextField(
                       controller: messageEditingController,
                       decoration: InputDecoration(
-                          hintText: "Message ...",
+                          hintText: "Написать сообщение...",
                           hintStyle: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -144,7 +144,7 @@ class MessageTile extends StatelessWidget {
         child: Text(message,
             textAlign: TextAlign.start,
             style: TextStyle(
-                color: Colors.white,
+                color: Colors.black,
                 fontSize: 16,
                 fontFamily: 'OverpassRegular',
                 fontWeight: FontWeight.w300)),

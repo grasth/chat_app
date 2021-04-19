@@ -22,16 +22,16 @@ class _ChatRoomsState extends State<ChatRooms> {
       builder: (context, snapshot) {
         return snapshot.hasData
             ? ListView.builder(
-                itemCount: snapshot.data.documents.length,
+                itemCount: snapshot.data.size,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ChatRoomsTile(
-                    userName: snapshot.data.documents[index].data['chatRoomId']
+                    userName: snapshot.data.docs[index]
+                        .get('chatRoomId')
                         .toString()
                         .replaceAll("_", "")
                         .replaceAll(Constants.myName, ""),
-                    chatRoomId:
-                        snapshot.data.documents[index].data["chatRoomId"],
+                    chatRoomId: snapshot.data.docs[index].get("chatRoomId"),
                   );
                 })
             : Container();
@@ -50,8 +50,6 @@ class _ChatRoomsState extends State<ChatRooms> {
     FirestoreFunctions().getUserChats(Constants.myName).then((snapshots) {
       setState(() {
         chatRooms = snapshots;
-        print(
-            "we got the data + ${chatRooms.toString()} this is name  ${Constants.myName}");
       });
     });
   }
@@ -97,10 +95,8 @@ class _ChatRoomsState extends State<ChatRooms> {
       ),
       body: Container(
         color: Colors.black,
-        margin: EdgeInsets.only(left: 15, top: 30, right: 15),
-        child: Column(
-          children: [],
-        ),
+        margin: EdgeInsets.only(left: 5, top: 10, right: 5),
+        child: chatRoomsList(),
       ),
     );
   }
@@ -124,7 +120,7 @@ class ChatRoomsTile extends StatelessWidget {
                     )));
       },
       child: Container(
-        color: Colors.black26,
+        color: Colors.blue,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Row(
           children: [
