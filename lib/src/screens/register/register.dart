@@ -21,7 +21,6 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  // ignore: unused_elemen
   _createUser() async {
     if (_formKey.currentState.validate()) {
       setState(() {

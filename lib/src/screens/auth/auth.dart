@@ -1,7 +1,10 @@
+import 'package:chat_app/src/screens/chatrooms/chatrooms.dart';
 import 'package:chat_app/src/screens/const/color_const.dart';
 import 'package:chat_app/src/screens/widgets/footer.dart';
 import 'package:chat_app/src/screens/widgets/header.dart';
 import 'package:chat_app/src/screens/widgets/subtitle.dart';
+import 'package:chat_app/src/services/auth/auth.dart';
+import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
 import 'package:flutter/material.dart';
 
 class AuthPage extends StatefulWidget {
@@ -11,11 +14,33 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  AuthFb _authService = new AuthFb();
+  bool isLoading = false;
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
+
+    _auth() async {
+      if (_formKey.currentState.validate()) {
+        setState(() {
+          isLoading = true;
+        });
+        _authService
+            .signIn(email: email.text, password: password.text)
+            .then((result) {
+          if (result != null) {
+            AccountPrefs.saveUserEmailSharedPreference(email.text);
+            AccountPrefs.saveUserLoggedInSharedPreference(true);
+
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => ChatRooms()));
+          }
+        });
+      }
+    }
 
     return Scaffold(
       body: Padding(
@@ -99,20 +124,11 @@ class _AuthPageState extends State<AuthPage> {
                             MaterialStateProperty.all<Color>(blueColor)),
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        print("Height: " + queryData.size.height.toString());
-                        print('LoginData');
-                        //print('UserName: ' + username.text);
-                        print('Email: ' + email.text);
-                        print('Password: ' + password.text);
-                        // Navigator.pushReplacement(
-                        //     context,
-                        //     new MaterialPageRoute(
-                        //         builder: (BuildContext context) =>
-                        //             );
+                        _auth();
                       }
                     },
                     child: Text(
-                      "Зарегистрироваться",
+                      "Войти",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,

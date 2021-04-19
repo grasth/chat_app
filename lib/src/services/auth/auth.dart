@@ -5,7 +5,7 @@ import 'package:chat_app/src/services/auth/firestore.dart';
 
 class AuthFb {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  AddUser _addUser = new AddUser();
+  FirestoreFunctions _addUser = new FirestoreFunctions();
 
   UserModel _userFromFirebaseUser(User user) {
     return user != null ? UserModel(userId: user.uid) : null;

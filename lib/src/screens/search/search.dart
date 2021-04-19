@@ -1,3 +1,6 @@
+import 'package:chat_app/src/screens/dialog/dialog.dart';
+import 'package:chat_app/src/services/auth/constants.dart';
+import 'package:chat_app/src/services/auth/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -50,23 +53,23 @@ class _UserSearch extends State<UserSearch> {
 
   /// 1.create a chatroom, send user to the chatroom, other userdetails
   sendMessage(String userName) {
-    // List<String> users = [Constants.myName, userName];
+    List<String> users = [Constants.myName, userName];
 
-    // String chatRoomId = getChatRoomId(Constants.myName, userName);
+    String chatRoomId = getChatRoomId(Constants.myName, userName);
 
-    // Map<String, dynamic> chatRoom = {
-    //   "users": users,
-    //   "chatRoomId": chatRoomId,
-    // };
+    Map<String, dynamic> chatRoom = {
+      "users": users,
+      "chatRoomId": chatRoomId,
+    };
 
-    //databaseMethods.addChatRoom(chatRoom, chatRoomId);
+    FirestoreFunctions().addChatRoom(chatRoom, chatRoomId);
 
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => Chat(
-    //               chatRoomId: chatRoomId,
-    //             )));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Chat(
+                  chatRoomId: chatRoomId,
+                )));
   }
 
   Widget userTile(String userName, String userEmail) {

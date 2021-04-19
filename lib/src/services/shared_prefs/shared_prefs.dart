@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountPrefs {
   static String sharedPreferenceUserLoggedInKey = "ISLOGGEDIN";
-  static String sharedPreferenceUserIdKey = "USERIDKEY";
+  static String sharedPreferenceUserNameKey = "USERNAMEKEY";
   static String sharedPreferenceUserEmailKey = "USEREMAILKEY";
 
   /// saving data to sharedpreference
@@ -13,9 +13,9 @@ class AccountPrefs {
         sharedPreferenceUserLoggedInKey, isUserLoggedIn);
   }
 
-  static Future<bool> saveUserIdSharedPreference(String userId) async {
+  static Future<bool> saveUserNameSharedPreference(String userName) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.setString(sharedPreferenceUserIdKey, userId);
+    return await preferences.setString(sharedPreferenceUserNameKey, userName);
   }
 
   static Future<bool> saveUserEmailSharedPreference(String userEmail) async {
@@ -23,14 +23,16 @@ class AccountPrefs {
     return await preferences.setString(sharedPreferenceUserEmailKey, userEmail);
   }
 
+  /// fetching data from sharedpreference
+
   static Future<bool> getUserLoggedInSharedPreference() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.getBool(sharedPreferenceUserLoggedInKey);
   }
 
-  static Future<String> getUserIdSharedPreference() async {
+  static Future<String> getUserNameSharedPreference() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString(sharedPreferenceUserIdKey);
+    return await preferences.getString(sharedPreferenceUserNameKey);
   }
 
   static Future<String> getUserEmailSharedPreference() async {
