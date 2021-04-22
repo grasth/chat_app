@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 
 class Chat extends StatefulWidget {
   final String chatRoomId;
+  final String friendName;
 
-  Chat({this.chatRoomId});
+  Chat({this.chatRoomId, this.friendName});
 
   @override
   _Chat createState() => _Chat();
@@ -39,11 +40,13 @@ class _Chat extends State<Chat> {
     if (messageEditingController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {
         "sendBy": Constants.myName,
-        "message": messageEditingController.text,
-        'time': DateTime.now().millisecondsSinceEpoch,
+        "body": messageEditingController.text,
+        'time': Timestamp.now().seconds,
       };
 
       FirestoreFunctions().addMessage(widget.chatRoomId, chatMessageMap);
+      FirestoreFunctions()
+          .updateLastMessage(widget.chatRoomId, messageEditingController.text);
 
       setState(() {
         messageEditingController.text = "";
@@ -65,7 +68,7 @@ class _Chat extends State<Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("user"),
+        title: Text(widget.friendName.toString()),
       ),
       body: Container(
         child: Stack(
