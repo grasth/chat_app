@@ -1,10 +1,9 @@
 import 'package:chat_app/src/screens/dialog/dialog.dart';
 import 'package:chat_app/src/services/auth/constants.dart';
 import 'package:chat_app/src/services/auth/firestore.dart';
+import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import 'firestore_search.dart';
 
 class UserSearch extends StatefulWidget {
   @override
@@ -12,7 +11,7 @@ class UserSearch extends StatefulWidget {
 }
 
 class _UserSearch extends State<UserSearch> {
-  UserSearch_fb _userSearch = new UserSearch_fb();
+  FirestoreFunctions _firestoreFunctions = FirestoreFunctions();
   TextEditingController searchEditingController = new TextEditingController();
   QuerySnapshot searchResultSnapshot;
 
@@ -24,11 +23,10 @@ class _UserSearch extends State<UserSearch> {
       setState(() {
         isLoading = true;
       });
-      await _userSearch
+      await _firestoreFunctions
           .searchByName(searchEditingController.text.trim())
           .then((snapshot) {
         searchResultSnapshot = snapshot;
-        print("$searchResultSnapshot");
         setState(() {
           isLoading = false;
           haveUserSearched = true;
@@ -51,28 +49,41 @@ class _UserSearch extends State<UserSearch> {
         : Container();
   }
 
-  /// 1.create a chatroom, send user to the chatroom, other userdetails
-  sendMessage(String userName) {
-    List<String> users = [Constants.myName, userName];
+  sendMessage(String userName) async {
+    var uid = await AccountPrefs.getUserIdSharedPreference();
+    await FirestoreFunctions().setNameById(uid);
+    Variables.chatCreated = false;
+    Variables.chatRoomId = "";
 
-    String chatRoomId = getChatRoomId(Constants.myName, userName);
+    await FirestoreFunctions().thisChatCreated(Constants.myName, userName);
+    if (!Variables.chatCreated) {
+      List<String> users = [Constants.myName, userName];
 
-    Map<String, dynamic> chatRoom = {
-      "users": users,
-      "chatRoomId": chatRoomId,
-    };
+      Variables.chatRoomTimeStamp = Timestamp.now().seconds.toString();
 
-    FirestoreFunctions().addChatRoom(chatRoom, chatRoomId);
+      Map<String, dynamic> chatRoom = {
+        "lastMessage": "Chat created!",
+        "createdAt": Variables.chatRoomTimeStamp,
+        "users": users,
+      };
+
+      await FirestoreFunctions().addChatRoom(chatRoom);
+      await FirestoreFunctions()
+          .getChatId(Variables.chatRoomTimeStamp, Constants.myName);
+    }
 
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => Chat(
-                  chatRoomId: chatRoomId,
+                  chatRoomId: Variables.chatRoomId,
+                  friendName: userName,
                 )));
   }
 
   Widget userTile(String userName, String userEmail) {
+    print(userName);
+    if (userName == Constants.myName) return null;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
@@ -110,14 +121,6 @@ class _UserSearch extends State<UserSearch> {
     );
   }
 
-  getChatRoomId(String a, String b) {
-    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
-      return "$b\_$a";
-    } else {
-      return "$a\_$b";
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -133,7 +136,7 @@ class _UserSearch extends State<UserSearch> {
         ),
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(
-          color: Colors.black, // установка цвета для иконок AppBar - чёрный
+          color: Colors.black,
         ),
       ),
       body: isLoading

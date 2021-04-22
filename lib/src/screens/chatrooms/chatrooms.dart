@@ -25,14 +25,18 @@ class _ChatRoomsState extends State<ChatRooms> {
                 itemCount: snapshot.data.size,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  return ChatRoomsTile(
-                    userName: snapshot.data.docs[index]
-                        .get('chatRoomId')
-                        .toString()
-                        .replaceAll("_", "")
-                        .replaceAll(Constants.myName, ""),
-                    chatRoomId: snapshot.data.docs[index].get("chatRoomId"),
-                  );
+                  if (snapshot.data.docs[index].get("lastMessage") !=
+                      "Chat created!") {
+                    return ChatRoomsTile(
+                        userName: snapshot.data.docs[index].get("users")[0] !=
+                                Constants.myName
+                            ? snapshot.data.docs[index].get("users")[0]
+                            : snapshot.data.docs[index].get("users")[1],
+                        chatRoomId: snapshot.data.docs[index].get("createdAt"),
+                        lastMessage:
+                            snapshot.data.docs[index].get("lastMessage"));
+                  } else
+                    return null;
                 })
             : Container();
       },
@@ -46,7 +50,6 @@ class _ChatRoomsState extends State<ChatRooms> {
   }
 
   getUserInfogetChats() async {
-    Constants.myName = await AccountPrefs.getUserNameSharedPreference();
     FirestoreFunctions().getUserChats(Constants.myName).then((snapshots) {
       setState(() {
         chatRooms = snapshots;
@@ -105,8 +108,9 @@ class _ChatRoomsState extends State<ChatRooms> {
 class ChatRoomsTile extends StatelessWidget {
   final String userName;
   final String chatRoomId;
+  final String lastMessage;
 
-  ChatRoomsTile({this.userName, @required this.chatRoomId});
+  ChatRoomsTile({this.userName, @required this.chatRoomId, this.lastMessage});
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +121,7 @@ class ChatRoomsTile extends StatelessWidget {
             MaterialPageRoute(
                 builder: (context) => Chat(
                       chatRoomId: chatRoomId,
+                      friendName: userName,
                     )));
       },
       child: Container(
@@ -140,13 +145,24 @@ class ChatRoomsTile extends StatelessWidget {
             SizedBox(
               width: 12,
             ),
-            Text(userName,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'OverpassRegular',
-                    fontWeight: FontWeight.w300))
+            Column(
+              children: [
+                Text(userName,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'OverpassRegular',
+                        fontWeight: FontWeight.w300)),
+                Text(lastMessage,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontFamily: 'OverpassRegular',
+                        fontWeight: FontWeight.w300)),
+              ],
+            )
           ],
         ),
       ),

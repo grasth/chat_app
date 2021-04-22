@@ -26,7 +26,7 @@ class _Chat extends State<Chat> {
                 itemCount: snapshot.data.size,
                 itemBuilder: (context, index) {
                   return MessageTile(
-                    message: snapshot.data.docs[index].get("message"),
+                    message: snapshot.data.docs[index].get("body"),
                     sendByMe: Constants.myName ==
                         snapshot.data.docs[index].get("sendBy"),
                   );
@@ -36,7 +36,7 @@ class _Chat extends State<Chat> {
     );
   }
 
-  addMessage() {
+  addMessage() async {
     if (messageEditingController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {
         "sendBy": Constants.myName,
@@ -44,9 +44,10 @@ class _Chat extends State<Chat> {
         'time': Timestamp.now().seconds,
       };
 
-      FirestoreFunctions().addMessage(widget.chatRoomId, chatMessageMap);
-      FirestoreFunctions()
-          .updateLastMessage(widget.chatRoomId, messageEditingController.text);
+      await FirestoreFunctions()
+          .addMessage(widget.chatRoomId.toString(), chatMessageMap);
+      await FirestoreFunctions().updateLastMessage(
+          widget.chatRoomId.toString(), messageEditingController.text);
 
       setState(() {
         messageEditingController.text = "";

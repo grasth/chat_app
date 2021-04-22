@@ -27,7 +27,12 @@ class _MyAppState extends State<MyApp> {
   getLoggedInState() async {
     await AccountPrefs.getUserLoggedInSharedPreference().then((value) {
       setState(() {
-        userIsLoggedIn = value;
+        if (value == null) {
+          userIsLoggedIn = false;
+        } else {
+          userIsLoggedIn = value;
+        }
+        ;
       });
     });
   }

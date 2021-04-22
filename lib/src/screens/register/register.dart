@@ -4,7 +4,6 @@ import 'package:chat_app/src/screens/widgets/footer.dart';
 import 'package:chat_app/src/screens/widgets/header.dart';
 import 'package:chat_app/src/screens/widgets/subtitle.dart';
 import 'package:chat_app/src/services/auth/auth.dart';
-import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -33,9 +32,6 @@ class _SignUpPageState extends State<SignUpPage> {
               password: password.text)
           .then((result) {
         if (result != null) {
-          AccountPrefs.saveUserEmailSharedPreference(email.text);
-          AccountPrefs.saveUserLoggedInSharedPreference(true);
-
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => ChatRooms()));
         }

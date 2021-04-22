@@ -1,7 +1,10 @@
 import 'package:chat_app/src/models/usermodel.dart';
+import 'package:chat_app/src/services/auth/constants.dart';
+import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chat_app/src/services/auth/firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 class AuthFb {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -15,6 +18,11 @@ class AuthFb {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
+
+      await FirestoreFunctions().setNameById(result.user.uid);
+      Constants.uid = result.user.uid;
+      AccountPrefs.saveUserIdSharedPreference(result.user.uid);
+      AccountPrefs.saveUserLoggedInSharedPreference(true);
 
       return _userFromFirebaseUser(result.user);
     } catch (e) {
@@ -35,7 +43,12 @@ class AuthFb {
         "userId": result.user.uid
       };
 
-      await _addUser.add(userData);
+      await FirestoreFunctions().setNameById(result.user.uid);
+      Constants.uid = result.user.uid;
+      AccountPrefs.saveUserIdSharedPreference(result.user.uid);
+      AccountPrefs.saveUserLoggedInSharedPreference(true);
+      await _addUser.add(userData, result.user.uid);
+
       return _userFromFirebaseUser(result.user);
     } catch (e) {
       print(e.toString());
@@ -45,6 +58,8 @@ class AuthFb {
 
   Future signOut() async {
     try {
+      AccountPrefs.saveUserIdSharedPreference("");
+      AccountPrefs.saveUserLoggedInSharedPreference(false);
       return await _auth.signOut();
     } catch (e) {
       print(e.toString());
