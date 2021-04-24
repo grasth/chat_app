@@ -4,7 +4,6 @@ import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chat_app/src/services/auth/firestore.dart';
-import 'package:flutter/cupertino.dart';
 
 class AuthFb {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -21,12 +20,12 @@ class AuthFb {
 
       await FirestoreFunctions().setNameById(result.user.uid);
       Constants.uid = result.user.uid;
-      AccountPrefs.saveUserIdSharedPreference(result.user.uid);
-      AccountPrefs.saveUserLoggedInSharedPreference(true);
+      await AccountPrefs.saveUserIdSharedPreference(result.user.uid);
+      await AccountPrefs.saveUserLoggedInSharedPreference(true);
 
       return _userFromFirebaseUser(result.user);
     } catch (e) {
-      print(e.toString());
+      print("error: " + e.toString());
       return null;
     }
   }
@@ -43,15 +42,16 @@ class AuthFb {
         "userId": result.user.uid
       };
 
+      await _addUser.add(userData, result.user.uid);
+
       await FirestoreFunctions().setNameById(result.user.uid);
       Constants.uid = result.user.uid;
-      AccountPrefs.saveUserIdSharedPreference(result.user.uid);
-      AccountPrefs.saveUserLoggedInSharedPreference(true);
-      await _addUser.add(userData, result.user.uid);
+      await AccountPrefs.saveUserIdSharedPreference(result.user.uid);
+      await AccountPrefs.saveUserLoggedInSharedPreference(true);
 
       return _userFromFirebaseUser(result.user);
     } catch (e) {
-      print(e.toString());
+      print("error: " + e.toString());
       return null;
     }
   }

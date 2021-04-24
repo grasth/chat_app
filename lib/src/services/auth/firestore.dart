@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreFunctions {
   Future<void> add(userData, userId) async {
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection("users")
         .doc(userId)
         .set(userData)

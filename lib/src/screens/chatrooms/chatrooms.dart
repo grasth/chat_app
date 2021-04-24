@@ -125,44 +125,48 @@ class ChatRoomsTile extends StatelessWidget {
                     )));
       },
       child: Container(
-        color: Colors.blue,
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        child: Row(
+        padding: EdgeInsets.only(top: 5, bottom: 5),
+        color: Colors.white,
+        child: Column(
           children: [
-            Container(
-              height: 30,
-              width: 30,
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(30)),
-              child: Text(userName.substring(0, 1),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontFamily: 'OverpassRegular',
-                      fontWeight: FontWeight.w300)),
-            ),
-            SizedBox(
-              width: 12,
-            ),
-            Column(
+            Row(
               children: [
-                Text(userName,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: 'OverpassRegular',
-                        fontWeight: FontWeight.w300)),
-                Text(lastMessage,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontFamily: 'OverpassRegular',
-                        fontWeight: FontWeight.w300)),
+                Container(
+                  height: 20,
+                  width: 20,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(30)),
+                  child: Text(userName.substring(0, 1),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontFamily: 'OverpassRegular',
+                          fontWeight: FontWeight.w300)),
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Column(
+                  children: [
+                    Text(userName,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontFamily: 'OverpassRegular',
+                            fontWeight: FontWeight.w300)),
+                    Text(lastMessage,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontFamily: 'OverpassRegular',
+                            fontWeight: FontWeight.w300)),
+                  ],
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),
