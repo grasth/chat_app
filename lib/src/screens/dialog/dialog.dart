@@ -56,8 +56,9 @@ class _Chat extends State<Chat> {
   }
 
   @override
-  void initState() {
-    FirestoreFunctions().getChats(widget.chatRoomId).then((val) {
+  initState() {
+    print(Variables.chatRoomId);
+    FirestoreFunctions().getChats(Variables.chatRoomId).then((val) {
       setState(() {
         chats = val;
       });
@@ -69,7 +70,14 @@ class _Chat extends State<Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.friendName.toString()),
+        backgroundColor: Colors.white,
+        title: Text(
+          widget.friendName.toString(),
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
       ),
       body: Container(
         child: Stack(
@@ -80,7 +88,7 @@ class _Chat extends State<Chat> {
               width: MediaQuery.of(context).size.width,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                color: Color(0x54FFFFFF),
+                color: Color(0xE8E4E4E8E4E4),
                 child: Row(
                   children: [
                     Expanded(
@@ -89,7 +97,7 @@ class _Chat extends State<Chat> {
                       decoration: InputDecoration(
                           hintText: "Написать сообщение...",
                           hintStyle: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xC4C4C4C4C4C4),
                             fontSize: 16,
                           ),
                           border: InputBorder.none),
@@ -129,12 +137,16 @@ class MessageTile extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(
           top: 8, bottom: 8, left: sendByMe ? 0 : 24, right: sendByMe ? 24 : 0),
-      alignment: sendByMe ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: sendByMe ? Alignment.bottomRight : Alignment.bottomLeft,
       child: Container(
         margin:
             sendByMe ? EdgeInsets.only(left: 30) : EdgeInsets.only(right: 30),
         padding: EdgeInsets.only(top: 17, bottom: 17, left: 20, right: 20),
         decoration: BoxDecoration(
+          color: sendByMe ? Color.fromARGB(232, 232, 228, 228) : Colors.white,
+          border: sendByMe
+              ? Border.all(color: Color.fromARGB(232, 232, 228, 228))
+              : Border.all(color: Color.fromARGB(232, 232, 228, 228)),
           borderRadius: sendByMe
               ? BorderRadius.only(
                   topLeft: Radius.circular(23),

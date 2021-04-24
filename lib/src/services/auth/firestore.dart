@@ -1,5 +1,6 @@
 import 'package:chat_app/src/screens/dialog/dialog.dart';
 import 'package:chat_app/src/services/auth/constants.dart';
+import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreFunctions {
@@ -14,7 +15,7 @@ class FirestoreFunctions {
   }
 
   setNameById(String userId) async {
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection("users")
         .doc(userId)
         .get()
@@ -31,19 +32,33 @@ class FirestoreFunctions {
         .get();
   }
 
-  thisChatCreated(String user1, String user2) {
-    FirebaseFirestore.instance
+  chatExist(String user1, String user2) async {
+    Variables.chatCreate = true;
+    await FirebaseFirestore.instance
         .collection("dialogs")
-        .where('users', isEqualTo: [user1, user2])
+        .where("users", arrayContains: user1)
         .get()
-        .then((snapshot) {
-          Variables.chatCreated = snapshot.docs.isNotEmpty;
-          if (!Variables.chatCreated)
-            Variables.chatRoomId = snapshot.docs.last.id;
+        .then((value) {
+      if (value.docs.length == 0) {
+        Variables.chatCreate = true;
+      } else {
+        value.docs.forEach((field) {
+          if (field.data()['users'][0] == user2 ||
+              field.data()['users'][1] == user2) {
+            Variables.chatRoomId = field.id;
+            Variables.chatCreate = false;
+            print("EndLoop");
+            return;
+          }
         });
+      }
+    });
+    print("ChatCreate {" + user2 + "}: " + Variables.chatCreate.toString());
+    if (!Variables.chatCreate)
+      print("ChatId {" + user2 + "}: " + Variables.chatRoomId);
   }
 
-  Future<bool> addChatRoom(chatRoom) {
+  addChatRoom(chatRoom) {
     FirebaseFirestore.instance.collection("dialogs").doc().set(chatRoom);
   }
 
@@ -69,7 +84,7 @@ class FirestoreFunctions {
         .snapshots();
   }
 
-  Future<void> addMessage(String chatRoomId, chatMessageData) {
+  addMessage(String chatRoomId, chatMessageData) {
     FirebaseFirestore.instance
         .collection("dialogs")
         .doc(chatRoomId)
@@ -91,6 +106,8 @@ class FirestoreFunctions {
   }
 
   getUserChats(String itIsMyName) async {
+    await FirestoreFunctions()
+        .setNameById(await AccountPrefs.getUserIdSharedPreference());
     return await FirebaseFirestore.instance
         .collection("dialogs")
         .where('users', arrayContains: itIsMyName)

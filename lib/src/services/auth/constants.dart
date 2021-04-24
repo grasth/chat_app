@@ -6,6 +6,7 @@ class Constants {
 class Variables {
   static String chatRoomId = "";
   static String chatRoomTimeStamp = "";
-  static bool chatCreated = false;
+  static bool chatCreate = false;
+  static int chatCount = 0;
   static String friendId = '';
 }

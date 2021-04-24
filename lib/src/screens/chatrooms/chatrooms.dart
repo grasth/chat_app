@@ -15,7 +15,6 @@ class ChatRooms extends StatefulWidget {
 
 class _ChatRoomsState extends State<ChatRooms> {
   Stream chatRooms;
-
   Widget chatRoomsList() {
     return StreamBuilder(
       stream: chatRooms,
@@ -28,11 +27,11 @@ class _ChatRoomsState extends State<ChatRooms> {
                   if (snapshot.data.docs[index].get("lastMessage") !=
                       "Chat created!") {
                     return ChatRoomsTile(
-                        userName: snapshot.data.docs[index].get("users")[0] !=
+                        userName: snapshot.data.docs[index].get("users")[0] ==
                                 Constants.myName
-                            ? snapshot.data.docs[index].get("users")[0]
-                            : snapshot.data.docs[index].get("users")[1],
-                        chatRoomId: snapshot.data.docs[index].get("createdAt"),
+                            ? snapshot.data.docs[index].get("users")[1]
+                            : snapshot.data.docs[index].get("users")[0],
+                        chatRoomId: snapshot.data.docs[index].id,
                         lastMessage:
                             snapshot.data.docs[index].get("lastMessage"));
                   } else
@@ -116,6 +115,7 @@ class ChatRoomsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        Variables.chatRoomId = chatRoomId;
         Navigator.push(
             context,
             MaterialPageRoute(

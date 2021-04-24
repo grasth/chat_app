@@ -52,11 +52,12 @@ class _UserSearch extends State<UserSearch> {
   sendMessage(String userName) async {
     var uid = await AccountPrefs.getUserIdSharedPreference();
     await FirestoreFunctions().setNameById(uid);
-    Variables.chatCreated = false;
+
     Variables.chatRoomId = "";
 
-    await FirestoreFunctions().thisChatCreated(Constants.myName, userName);
-    if (!Variables.chatCreated) {
+    await FirestoreFunctions().chatExist(Constants.myName, userName);
+
+    if (Variables.chatCreate) {
       List<String> users = [Constants.myName, userName];
 
       Variables.chatRoomTimeStamp = Timestamp.now().seconds.toString();
@@ -67,7 +68,7 @@ class _UserSearch extends State<UserSearch> {
         "users": users,
       };
 
-      await FirestoreFunctions().addChatRoom(chatRoom);
+      FirestoreFunctions().addChatRoom(chatRoom);
       await FirestoreFunctions()
           .getChatId(Variables.chatRoomTimeStamp, Constants.myName);
     }
