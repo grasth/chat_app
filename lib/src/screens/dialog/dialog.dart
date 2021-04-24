@@ -2,6 +2,7 @@ import 'package:chat_app/src/services/auth/constants.dart';
 import 'package:chat_app/src/services/auth/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class Chat extends StatefulWidget {
   final String chatRoomId;
@@ -14,6 +15,7 @@ class Chat extends StatefulWidget {
 }
 
 class _Chat extends State<Chat> {
+  final ScrollController _scrollController = ScrollController();
   Stream<QuerySnapshot> chats;
   TextEditingController messageEditingController = new TextEditingController();
 
@@ -23,6 +25,9 @@ class _Chat extends State<Chat> {
       builder: (context, snapshot) {
         return snapshot.hasData
             ? ListView.builder(
+                padding: EdgeInsets.only(bottom: 70),
+                //controller: _scrollController,
+                reverse: true,
                 itemCount: snapshot.data.size,
                 itemBuilder: (context, index) {
                   return MessageTile(
@@ -87,20 +92,22 @@ class _Chat extends State<Chat> {
               alignment: Alignment.bottomCenter,
               width: MediaQuery.of(context).size.width,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                color: Color(0xE8E4E4E8E4E4),
+                margin: EdgeInsets.only(top: 110),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 5),
+                color: Colors.white,
                 child: Row(
                   children: [
                     Expanded(
                         child: TextField(
                       controller: messageEditingController,
                       decoration: InputDecoration(
-                          hintText: "Написать сообщение...",
-                          hintStyle: TextStyle(
-                            color: Color(0xC4C4C4C4C4C4),
-                            fontSize: 16,
-                          ),
-                          border: InputBorder.none),
+                        hintText: "Написать сообщение...",
+                        hintStyle: TextStyle(
+                          color: Color(0xC4C4C4C4C4C4),
+                          fontSize: 16,
+                        ),
+                        //border: InputBorder.none
+                      ),
                     )),
                     SizedBox(
                       width: 16,
@@ -136,7 +143,7 @@ class MessageTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
-          top: 8, bottom: 8, left: sendByMe ? 0 : 24, right: sendByMe ? 24 : 0),
+          top: 4, bottom: 8, left: sendByMe ? 0 : 24, right: sendByMe ? 24 : 0),
       alignment: sendByMe ? Alignment.bottomRight : Alignment.bottomLeft,
       child: Container(
         margin:

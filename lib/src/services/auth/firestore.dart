@@ -1,4 +1,3 @@
-import 'package:chat_app/src/screens/dialog/dialog.dart';
 import 'package:chat_app/src/services/auth/constants.dart';
 import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -80,7 +79,7 @@ class FirestoreFunctions {
         .collection("dialogs")
         .doc(chatRoomId)
         .collection("chats")
-        .orderBy('time')
+        .orderBy('time', descending: true)
         .snapshots();
   }
 
