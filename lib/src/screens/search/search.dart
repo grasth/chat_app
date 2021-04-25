@@ -63,6 +63,7 @@ class _UserSearch extends State<UserSearch> {
       Variables.chatRoomTimeStamp = Timestamp.now().seconds.toString();
 
       Map<String, dynamic> chatRoom = {
+        "chats": [],
         "lastMessage": "Chat created!",
         "createdAt": Variables.chatRoomTimeStamp,
         "users": users,
@@ -72,7 +73,6 @@ class _UserSearch extends State<UserSearch> {
       await FirestoreFunctions()
           .getChatId(Variables.chatRoomTimeStamp, Constants.myName);
     }
-
     Navigator.push(
         context,
         MaterialPageRoute(

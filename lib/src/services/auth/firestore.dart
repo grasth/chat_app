@@ -61,8 +61,8 @@ class FirestoreFunctions {
     FirebaseFirestore.instance.collection("dialogs").doc().set(chatRoom);
   }
 
-  getChatId(String timeStamp, String userName) {
-    FirebaseFirestore.instance
+  getChatId(String timeStamp, String userName) async {
+    await FirebaseFirestore.instance
         .collection("dialogs")
         .where('createdAt', isEqualTo: timeStamp)
         .where('users', arrayContains: userName)
@@ -71,6 +71,7 @@ class FirestoreFunctions {
         .get()
         .then((snapshot) {
       Variables.chatRoomId = snapshot.docs.first.id;
+      print("Set id: " + Variables.chatRoomId);
     });
   }
 
@@ -94,9 +95,12 @@ class FirestoreFunctions {
     });
   }
 
-  updateLastMessage(String chatRoomId, String lastMessage) {
+  updateLastMessage(
+      String chatRoomId, String lastMessage, String lastMessageDate) {
     Map<String, dynamic> messageUpdate = {
       "lastMessage": lastMessage,
+      "lastMessageBy": Constants.myName,
+      "lastMessageDate": lastMessageDate
     };
     FirebaseFirestore.instance
         .collection('dialogs')

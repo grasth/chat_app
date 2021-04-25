@@ -6,6 +6,7 @@ import 'package:chat_app/src/services/auth/auth.dart';
 import 'package:chat_app/src/services/auth/constants.dart';
 import 'package:chat_app/src/services/auth/firestore.dart';
 import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatRooms extends StatefulWidget {
@@ -27,13 +28,18 @@ class _ChatRoomsState extends State<ChatRooms> {
                   if (snapshot.data.docs[index].get("lastMessage") !=
                       "Chat created!") {
                     return ChatRoomsTile(
-                        userName: snapshot.data.docs[index].get("users")[0] ==
-                                Constants.myName
-                            ? snapshot.data.docs[index].get("users")[1]
-                            : snapshot.data.docs[index].get("users")[0],
-                        chatRoomId: snapshot.data.docs[index].id,
-                        lastMessage:
-                            snapshot.data.docs[index].get("lastMessage"));
+                      userName: snapshot.data.docs[index].get("users")[0] ==
+                              Constants.myName
+                          ? snapshot.data.docs[index].get("users")[1]
+                          : snapshot.data.docs[index].get("users")[0],
+                      chatRoomId: snapshot.data.docs[index].id,
+                      lastMessage: snapshot.data.docs[index].get("lastMessage"),
+                      lastMessageByMe:
+                          snapshot.data.docs[index].get("lastMessageBy") ==
+                              Constants.myName,
+                      lastMessageTime:
+                          snapshot.data.docs[index].get("lastMessageDate"),
+                    );
                   } else
                     return null;
                 })
@@ -49,7 +55,9 @@ class _ChatRoomsState extends State<ChatRooms> {
   }
 
   getUserInfogetChats() async {
-    FirestoreFunctions().getUserChats(Constants.myName).then((snapshots) {
+    await FirestoreFunctions()
+        .setNameById(await AccountPrefs.getUserIdSharedPreference());
+    await FirestoreFunctions().getUserChats(Constants.myName).then((snapshots) {
       setState(() {
         chatRooms = snapshots;
       });
@@ -59,8 +67,6 @@ class _ChatRoomsState extends State<ChatRooms> {
   AuthFb authFb = new AuthFb();
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData = MediaQuery.of(context);
-
     return Scaffold(
       backgroundColor: backGroundColor,
       appBar: AppBar(
@@ -108,11 +114,21 @@ class ChatRoomsTile extends StatelessWidget {
   final String userName;
   final String chatRoomId;
   final String lastMessage;
+  final bool lastMessageByMe;
+  final String lastMessageTime;
 
-  ChatRoomsTile({this.userName, @required this.chatRoomId, this.lastMessage});
+  ChatRoomsTile(
+      {this.userName,
+      @required this.chatRoomId,
+      this.lastMessage,
+      this.lastMessageByMe,
+      this.lastMessageTime});
 
   @override
   Widget build(BuildContext context) {
+    DateTime date =
+        DateTime.fromMillisecondsSinceEpoch(int.parse(lastMessageTime) * 1000);
+
     return GestureDetector(
       onTap: () {
         Variables.chatRoomId = chatRoomId;
@@ -125,49 +141,11 @@ class ChatRoomsTile extends StatelessWidget {
                     )));
       },
       child: Container(
-        padding: EdgeInsets.only(top: 5, bottom: 5),
         color: Colors.white,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  height: 20,
-                  width: 20,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(30)),
-                  child: Text(userName.substring(0, 1),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontFamily: 'OverpassRegular',
-                          fontWeight: FontWeight.w300)),
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                Column(
-                  children: [
-                    Text(userName,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontFamily: 'OverpassRegular',
-                            fontWeight: FontWeight.w300)),
-                    Text(lastMessage,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontFamily: 'OverpassRegular',
-                            fontWeight: FontWeight.w300)),
-                  ],
-                ),
-              ],
-            ),
-          ],
+        height: 50,
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          children: [],
         ),
       ),
     );

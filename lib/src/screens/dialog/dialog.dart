@@ -15,7 +15,6 @@ class Chat extends StatefulWidget {
 }
 
 class _Chat extends State<Chat> {
-  final ScrollController _scrollController = ScrollController();
   Stream<QuerySnapshot> chats;
   TextEditingController messageEditingController = new TextEditingController();
 
@@ -26,7 +25,6 @@ class _Chat extends State<Chat> {
         return snapshot.hasData
             ? ListView.builder(
                 padding: EdgeInsets.only(bottom: 70),
-                //controller: _scrollController,
                 reverse: true,
                 itemCount: snapshot.data.size,
                 itemBuilder: (context, index) {
@@ -43,17 +41,18 @@ class _Chat extends State<Chat> {
 
   addMessage() async {
     if (messageEditingController.text.isNotEmpty) {
+      String lastMessageTime = Timestamp.now().seconds.toString();
+
       Map<String, dynamic> chatMessageMap = {
         "sendBy": Constants.myName,
         "body": messageEditingController.text,
-        'time': Timestamp.now().seconds,
+        'time': lastMessageTime
       };
 
       await FirestoreFunctions()
           .addMessage(widget.chatRoomId.toString(), chatMessageMap);
       await FirestoreFunctions().updateLastMessage(
-          widget.chatRoomId.toString(), messageEditingController.text);
-
+          widget.chatRoomId, messageEditingController.text, lastMessageTime);
       setState(() {
         messageEditingController.text = "";
       });
@@ -62,8 +61,8 @@ class _Chat extends State<Chat> {
 
   @override
   initState() {
-    print(Variables.chatRoomId);
-    FirestoreFunctions().getChats(Variables.chatRoomId).then((val) {
+    print(widget.chatRoomId);
+    FirestoreFunctions().getChats(widget.chatRoomId).then((val) {
       setState(() {
         chats = val;
       });
@@ -106,7 +105,6 @@ class _Chat extends State<Chat> {
                           color: Color(0xC4C4C4C4C4C4),
                           fontSize: 16,
                         ),
-                        //border: InputBorder.none
                       ),
                     )),
                     SizedBox(
