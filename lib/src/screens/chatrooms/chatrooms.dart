@@ -6,7 +6,6 @@ import 'package:chat_app/src/services/auth/auth.dart';
 import 'package:chat_app/src/services/auth/constants.dart';
 import 'package:chat_app/src/services/auth/firestore.dart';
 import 'package:chat_app/src/services/shared_prefs/shared_prefs.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatRooms extends StatefulWidget {
@@ -48,8 +47,10 @@ class _ChatRoomsState extends State<ChatRooms> {
     );
   }
 
+  bool isLoading = false;
   @override
   void initState() {
+    isLoading = true;
     getUserInfogetChats();
     super.initState();
   }
@@ -60,6 +61,7 @@ class _ChatRoomsState extends State<ChatRooms> {
     await FirestoreFunctions().getUserChats(Constants.myName).then((snapshots) {
       setState(() {
         chatRooms = snapshots;
+        isLoading = false;
       });
     });
   }
@@ -142,10 +144,65 @@ class ChatRoomsTile extends StatelessWidget {
       },
       child: Container(
         color: Colors.white,
-        height: 50,
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        height: 70,
+        //margin: EdgeInsets.symmetric(horizontal: 10),
         child: Row(
-          children: [],
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                height: 30,
+                width: 30,
+                margin: EdgeInsets.only(left: 10),
+                decoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    borderRadius: BorderRadius.circular(30)),
+                child: Text(userName.substring(0, 1),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'OverpassRegular',
+                        fontWeight: FontWeight.w300)),
+              ),
+            ),
+            Expanded(
+              flex: 6, // 60%
+              child: Column(children: [
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    userName,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  alignment: Alignment.topLeft,
+                  child: Text((lastMessageByMe ? "you: " : "he: ") +
+                      (lastMessage.length > 10
+                          ? (lastMessage.substring(0, 10)) + "..."
+                          : lastMessage)),
+                ),
+              ]),
+            ),
+            Expanded(
+              flex: 3,
+              child: Container(
+                child: Text(
+                  date.month.toString() +
+                      "month " +
+                      date.day.toString() +
+                      "day\n" +
+                      date.hour.toString() +
+                      ":" +
+                      date.minute.toString(),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
