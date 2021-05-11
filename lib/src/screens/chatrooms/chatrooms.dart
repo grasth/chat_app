@@ -1,3 +1,4 @@
+import 'package:chat_app/src/helper/timeHelper.dart';
 import 'package:chat_app/src/screens/const/color_const.dart';
 import 'package:chat_app/src/screens/dialog/dialog.dart';
 import 'package:chat_app/src/screens/search/search.dart';
@@ -95,16 +96,76 @@ class _ChatRoomsState extends State<ChatRooms> {
           IconButton(
             icon: Icon(Icons.exit_to_app, color: Colors.black),
             onPressed: () => {
-              authFb.signOut(),
-              AccountPrefs.saveUserLoggedInSharedPreference(false),
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => WelcomePage()))
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40)),
+                    elevation: 16,
+                    child: Container(
+                      height: 300.0,
+                      width: 360.0,
+                      child: ListView(
+                        children: <Widget>[
+                          SizedBox(height: 20),
+                          Center(
+                            child: Text(
+                              "Подтверждение выхода",
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          SizedBox(height: 60),
+                          FlatButton(
+                            onPressed: () {
+                              setState(() => Navigator.pop(context));
+                            },
+                            child: Text(
+                              'Остаться',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 40),
+                          FlatButton(
+                            onPressed: () {
+                              authFb.signOut();
+                              AccountPrefs.saveUserLoggedInSharedPreference(
+                                  false);
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => WelcomePage()));
+                            },
+                            child: Text(
+                              'Выход',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 20,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              )
             },
+            // authFb.signOut(),
+            // AccountPrefs.saveUserLoggedInSharedPreference(false),
+            // Navigator.pushReplacement(context,
+            //     MaterialPageRoute(builder: (context) => WelcomePage()))
           ),
         ],
       ),
       body: Container(
-        color: Colors.black,
+        color: Colors.white,
         margin: EdgeInsets.only(left: 5, top: 10, right: 5),
         child: chatRoomsList(),
       ),
@@ -191,15 +252,7 @@ class ChatRoomsTile extends StatelessWidget {
             Expanded(
               flex: 3,
               child: Container(
-                child: Text(
-                  date.month.toString() +
-                      "month " +
-                      date.day.toString() +
-                      "day\n" +
-                      date.hour.toString() +
-                      ":" +
-                      date.minute.toString(),
-                ),
+                child: Text(getTime(date)),
               ),
             )
           ],

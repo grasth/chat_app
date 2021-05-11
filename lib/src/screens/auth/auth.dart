@@ -4,6 +4,7 @@ import 'package:chat_app/src/screens/widgets/footer.dart';
 import 'package:chat_app/src/screens/widgets/header.dart';
 import 'package:chat_app/src/screens/widgets/subtitle.dart';
 import 'package:chat_app/src/services/auth/auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 
 class AuthPage extends StatefulWidget {
@@ -19,24 +20,35 @@ class _AuthPageState extends State<AuthPage> {
   TextEditingController password = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  _showToast() {
+    Fluttertoast.showToast(
+        msg: "Пароль или почта неверны",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM);
+  }
+
+  _auth() async {
+    if (_formKey.currentState.validate()) {
+      _authService
+          .signIn(email: email.text, password: password.text)
+          .then((result) {
+        if (result != null) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => ChatRooms()));
+        } else {
+          _showToast();
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
-
-    _auth() async {
-      if (_formKey.currentState.validate()) {
-        setState(() {
-          isLoading = true;
-        });
-        _authService
-            .signIn(email: email.text, password: password.text)
-            .then((result) {
-          if (result != null) {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => ChatRooms()));
-          }
-        });
-      }
-    }
 
     return Scaffold(
       body: Padding(
@@ -79,6 +91,11 @@ class _AuthPageState extends State<AuthPage> {
                             if (value == null || value.isEmpty) {
                               return 'Введите корректные данные';
                             }
+                            if (!RegExp(
+                                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                                .hasMatch(value)) {
+                              return 'Введите корректную почту';
+                            }
                             return null;
                           },
                         ),
@@ -100,6 +117,9 @@ class _AuthPageState extends State<AuthPage> {
                           validator: (String value) {
                             if (value == null || value.isEmpty) {
                               return 'Введите корректные данные';
+                            }
+                            if (value.length < 6) {
+                              return 'Введите корректный пароль';
                             }
                             return null;
                           },
